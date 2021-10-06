@@ -1,11 +1,14 @@
-import { AppContext } from '../App'
-import { useContext, useState } from 'react'
+
+import { useState } from 'react'
 import UserAlbums from './UserAlbums'
+import {connect} from 'react-redux'
+import { Redirect } from 'react-router-dom';
+import { updateUser } from '../store/users/actionCreator';
 
-const UserProfile = () => {
+const UserProfile = ({currentUser, editUser}) => {
 
-    const { getCurrentUser, updateUser } = useContext(AppContext)
-    const [user, setUser] = useState(getCurrentUser());
+    
+    const [user, setUser] = useState(currentUser);
 
     const changeFieldHandler = event => {
         setUser({ ...user, [event.target.name]: event.target.value })
@@ -13,11 +16,12 @@ const UserProfile = () => {
 
     const submitHandler = event => {
         event.preventDefault()
-        if (!user.fName.trim() || !user.email.trim() || !user.password.trim()) return
-        updateUser(user)
+        if (!user.fName.trim() || !user.email.trim() || !user.password.trim()) return 
+        editUser(user)
     }
 
     return (
+        <>{!currentUser ? <Redirect to='/users' />:
         <div className='container'>
             <div className='row'>
                 <div className="card col-4 text-center p-3 my-2">
@@ -74,10 +78,24 @@ const UserProfile = () => {
                         </form>
                     </div>
                 </div>
-                <UserAlbums />
+                <UserAlbums currentUser = {currentUser}/>
             </div>
         </div>
+}
+        </>
     )
 }
 
-export default UserProfile
+const mapStateToProps = ({usersReducer}) =>{
+    return{
+        currentUser: usersReducer.currentUser
+    }
+}
+
+const mapDispatchToProps = dispatch =>{
+    return{
+        editUser: (data) => dispatch(updateUser(data))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfile)

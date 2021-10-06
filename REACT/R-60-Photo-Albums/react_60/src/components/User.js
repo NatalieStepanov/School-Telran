@@ -1,9 +1,7 @@
-import { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { AppContext } from '../App'
 
-const User = ({user})=>{
-    const {currentUser} = useContext(AppContext)
+
+const User = ({user, currentUser})=>{
     return(
         <div className="card col-6 col-sm-4 col-md-3 text-center p-3 m-1">
             {user.avatar ? <img src={user.avatar} className="card-img-top" alt="..." /> :
@@ -13,7 +11,7 @@ const User = ({user})=>{
             <div className="card-body">
                 <h5 className="card-title">{user.fName} {user.lName}</h5>
                 <p className="card-text">{user.email}</p>
-                {currentUser === user.id ? 
+                {currentUser && currentUser.id === user.id ? 
                 <Link to = {`/user/${user.id}`}
                       className ='btn btn-dark'>profile edit</Link> : 
                 <Link to = {`/albums/user/${user.id}`}

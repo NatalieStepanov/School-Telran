@@ -7,19 +7,19 @@ export const getUsers  =()=>{
 
 export const setUsersToLocalStorage = (users) => localStorage.setItem('users', JSON.stringify(users))
 
-export const setCurrentUserLocalStorage = (id) =>{
-    localStorage.setItem('currentUserId', JSON.stringify(id))
+export const setCurrentUserLocalStorage = (user) =>{
+    localStorage.setItem('currentUserId', JSON.stringify(user))
 }
 
-export const getCurrentUserId = ()=>{
-    return JSON.parse(localStorage.getItem('currentUserId'))
+export const getCurrentUser = ()=>{
+    return JSON.parse(localStorage.getItem('currentUser'))
 }
 
 export const resetCurrentUser = ()=>{
-    localStorage.removeItem('currentUserId')
+    localStorage.removeItem('currentUser')
 }
 
-export const login = (currentUser) =>{
-    const user = getUsers().find(u => u.email === currentUser.email)
-    return user ? (user.password === currentUser.password ? user.id : null) : null
+export const loginUser = (data) =>{
+    const user = getUsers().find(u => u.email === data.email)
+    return user ? (user.password === data.password ? user : null) : null
 }

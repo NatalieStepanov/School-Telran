@@ -1,16 +1,13 @@
-import { useContext } from "react"
-import { AppContext } from "../App"
 import User from "./User"
-// import { useHistory } from "react-router-dom"
+import {connect} from 'react-redux'
 
-const Users = ({ history }) => {
-    const { users, currentUser } = useContext(AppContext);
-    //const history = useHistory() 
+const Users = ({ history, users, currentUser }) => {
+   
     return (
         <div className='container'>
             <h1 className='text-center my-5'>{users.length ? 'All our users' : 'You can be first one!'}</h1>
             <div className="row">
-                {users.map(user => <User key={user.id} user={user} />)}
+                {users.map(user => <User key={user.id} user={user} currentUser = {currentUser}/>)}
             </div>
             {!currentUser && <>
                 <hr />
@@ -26,4 +23,13 @@ const Users = ({ history }) => {
     )
 }
 
-export default Users;
+const mapStateToProps = ({usersReducer})=>{
+    return{
+        users: usersReducer.users,
+        currentUser: usersReducer.currentUser
+    }
+}
+
+export default connect(mapStateToProps, null)(Users);
+
+

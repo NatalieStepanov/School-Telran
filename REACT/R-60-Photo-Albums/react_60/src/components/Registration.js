@@ -1,84 +1,75 @@
-import { useContext, useState } from 'react'
-import { AppContext } from '../App'
-import { useHistory } from 'react-router-dom'
+import { useState } from 'react'
+import { Redirect } from 'react-router-dom'
 import Error from './Error'
+import { connect } from 'react-redux'
+import { registration } from '../store/users/actionCreator'
 
-const Registartion = ()=>{
+const Registartion = ({ registrationUser, error, currentUser }) => {
 
     const [formData, setFormData] = useState({
         fName: '',
         lName: '',
         email: '',
         password: '',
-        avatar:''
+        avatar: ''
     })
 
-    const [error, setError] = useState(null)
-
-    const history = useHistory()
-
-    const {addUser} = useContext(AppContext)
-
-    const changeFieldHandler = event=>{
-        setFormData({...formData, [event.target.name]: event.target.value})
+    const changeFieldHandler = event => {
+        setFormData({ ...formData, [event.target.name]: event.target.value })
     }
 
-    const submitHandler = event =>{
+    const submitHandler = event => {
         event.preventDefault()
-        setError(null)
         if (!formData.fName.trim() || !formData.email.trim() || !formData.password.trim()) return
-        if(addUser(formData))
-        history.push('/users')
-        else{
-            setError('user specified email is already exist');
-            setFormData({...formData, email:''})
-        }  
+        registrationUser(formData)
+        setFormData({ ...formData, email: '' })
     }
 
-    return(
-        <div className="container">
-            {error && <Error message = {error} />}
+    return (
+        <>{currentUser && <Redirect to='/users' />}
+            <div className="container">
                 <div className="w-50 mx-auto">
+                    {error.registration && <Error message={error.registration} />}
                     <form onSubmit={submitHandler}>
                         <div className="form-group">
                             <label>First Name</label>
-                            <input type="text" 
-                                    className="form-control" 
-                                    name="fName"
-                                    value = {formData.fName} 
-                                    onChange={changeFieldHandler}/>
+                            <input type="text"
+                                className="form-control"
+                                name="fName"
+                                value={formData.fName}
+                                onChange={changeFieldHandler} />
                         </div>
                         <div className="form-group">
                             <label>Last Name</label>
-                            <input type="text" 
-                                   className="form-control" 
-                                   name="lName"
-                                   value = {formData.lName} 
-                                   onChange={changeFieldHandler}/>
+                            <input type="text"
+                                className="form-control"
+                                name="lName"
+                                value={formData.lName}
+                                onChange={changeFieldHandler} />
                         </div>
                         <div className="form-group">
                             <label>Email</label>
-                            <input type="text" 
-                                   className="form-control" 
-                                   name="email"
-                                   value = {formData.email} 
-                                   onChange={changeFieldHandler}/>
+                            <input type="text"
+                                className="form-control"
+                                name="email"
+                                value={formData.email}
+                                onChange={changeFieldHandler} />
                         </div>
                         <div className="form-group">
                             <label>Password</label>
-                            <input type="text" 
-                                   className="form-control" 
-                                   name="password" 
-                                   value = {formData.password}
-                                   onChange={changeFieldHandler}/>
+                            <input type="text"
+                                className="form-control"
+                                name="password"
+                                value={formData.password}
+                                onChange={changeFieldHandler} />
                         </div>
                         <div className="form-group mb-2">
                             <label>Avatar</label>
-                            <input type="text" 
-                                   className="form-control" 
-                                   name="avatar"
-                                   value = {formData.avatar} 
-                                   onChange={changeFieldHandler}/>
+                            <input type="text"
+                                className="form-control"
+                                name="avatar"
+                                value={formData.avatar}
+                                onChange={changeFieldHandler} />
                         </div>
                         <div className="form-group">
                             <button type="submit" className="btn btn-primary w-100">Registartion</button>
@@ -86,8 +77,22 @@ const Registartion = ()=>{
                     </form>
                 </div>
             </div>
+        </>
     )
 
 }
 
-export default Registartion
+const mapStateToProps = ({ usersReducer }) => {
+    return {
+        error: usersReducer.error,
+        currentUser: usersReducer.currentUser
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        registrationUser: (user) => dispatch(registration(user))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Registartion)
